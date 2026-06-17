@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Разработка форм учётной документации</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            margin: 0;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+        h1 {
+            color: #0d3b66;
+            border-left: 6px solid #0d3b66;
+            padding-left: 20px;
+            margin-top: 0;
+        }
+        h2 {
+            color: #1e4a6e;
+            margin-top: 30px;
+        }
+        .highlight {
+            background: #fff3e0;
+            border-left: 5px solid #ff8c00;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #dce5ef;
+            padding: 10px 12px;
+            text-align: left;
+        }
+        th {
+            background: #eef3fa;
+        }
+        .badge {
+            display: inline-block;
+            background: #0d3b66;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>📄  Разработка форм первичной учётной документации в MS Word</h1>
+    <p><span class="badge">Задание №1</span> <span class="badge" style="background:#4caf50;">PDF</span></p>
+    <p><em>ПК 1.1 Осуществлять приём-передачу управленческой информации</em></p>
+
+    <div class="highlight">
+        ⚠️  <strong>Важно:</strong> Формы разрабатываются с использованием инструмента «Таблица» в MS Word. Все формы должны быть заполняемыми.
+    </div>
+
+    <h2>📌  Распределение форм документов</h2>
+    <table>
+        <thead>
+            <tr><th>№</th><th>ФИО студента</th><th>Форма приказа</th><th>Личная карточка</th><th>График отпусков</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>1</td><td>Бедило Анна</td><td>О приёме</td><td>✅</td><td>✅</td></tr>
+            <tr><td>2</td><td>Белогурова Анна</td><td>О переводе</td><td>✅</td><td>✅</td></tr>
+            <tr><td>3</td><td>Вайзитдинова Диана</td><td>О предоставлении отпуска</td><td>✅</td><td>✅</td></tr>
+            <tr><td>4</td><td>Вахитова Динара</td><td>О прекращении трудового договора</td><td>✅</td><td>✅</td></tr>
+        </tbody>
+    </table>
+
+    <h2>📎  Образец верхнего колонтитула</h2>
+    <div style="background: #f0f0f0; padding: 15px; border-radius: 10px; font-family: monospace;">
+        Документ подготовил Иванов И.И.<br>
+        Руководитель
+    </div>
+
+    <h2>📅  Срок выполнения</h2>
+    <p><strong>09.06.2026г.</strong></p>
+</div>
+</body>
+</html>

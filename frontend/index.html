@@ -1,60 +1,513 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мои лекции</title>
     <style>
-        body { font-family: Arial; background: #1e1e2e; color: #eee; display: flex; margin: 0; }
-        .sidebar { width: 300px; background: #181825; padding: 20px; height: 100vh; overflow-y: auto; }
-        .content { flex: 1; padding: 20px; }
-        iframe { width: 100%; height: 85vh; border: none; background: white; border-radius: 12px; }
-        button, input[type="file"] { margin: 10px 0; padding: 8px; border-radius: 8px; }
-        .lecture-list { list-style: none; padding-left: 0; }
-        .lecture-list li { margin: 8px 0; cursor: pointer; color: #89b4fa; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background 0.3s, color 0.2s;
+        }
+
+        body.light {
+            --bg: #f5f7fb;
+            --sidebar: #ffffff;
+            --text: #1e293b;
+            --text-secondary: #5a6e7a;
+            --border: #e2e8f0;
+            --accent: #4f46e5;
+            --accent-hover: #6366f1;
+            --file-hover: #f1f5f9;
+        }
+        body.dark {
+            --bg: #1e1e2e;
+            --sidebar: #181825;
+            --text: #cdd6f4;
+            --text-secondary: #94a3b8;
+            --border: #313244;
+            --accent: #89b4fa;
+            --accent-hover: #a6e3a1;
+            --file-hover: #313244;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 340px;
+            background: var(--sidebar);
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .sidebar-header h3 {
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            margin-bottom: 15px;
+        }
+
+        .voice-btn {
+            background: var(--accent);
+            color: var(--sidebar);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        .voice-btn.listening {
+            background: #f38ba8;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        .folder {
+            margin: 8px 0;
+        }
+
+        .folder-name {
+            font-weight: bold;
+            color: var(--accent);
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 6px;
+        }
+
+        .folder-name:hover {
+            background: var(--file-hover);
+        }
+
+        .file-list {
+            list-style: none;
+            padding-left: 20px;
+            margin: 5px 0;
+            display: none;
+        }
+
+        .file-list.show {
+            display: block;
+        }
+
+        .file-list li {
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .file-list a {
+            color: var(--text);
+            text-decoration: none;
+            display: block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            flex: 1;
+        }
+
+        .file-list a:hover {
+            background: var(--file-hover);
+        }
+
+        .reactions {
+            display: flex;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+
+        .reaction {
+            cursor: pointer;
+            opacity: 0.6;
+            transition: 0.1s;
+        }
+
+        .reaction:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .reaction.active {
+            opacity: 1;
+        }
+
+        .favorite-star {
+            cursor: pointer;
+            font-size: 1rem;
+            opacity: 0.6;
+        }
+
+        .favorite-star.active {
+            opacity: 1;
+color: gold;
+        }
+
+        .recent-section, .favorites-section {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+
+        .recent-title, .favorites-title {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .recent-list, .favorites-list {
+            list-style: none;
+            font-size: 0.8rem;
+        }
+
+        .recent-list li, .favorites-list li {
+            padding: 4px 0;
+            cursor: pointer;
+            color: var(--accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        iframe {
+            width: 100%;
+            height: calc(100vh - 40px);
+            border: none;
+            border-radius: 16px;
+            background: white;
+        }
+
+        .bottom-info {
+            margin-top: 20px;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-align: left;
+            border-top: 1px solid var(--border);
+            padding-top: 10px;
+        }
     </style>
 </head>
 <body>
 <div class="sidebar">
-    <h3>📚 Лекции</h3>
-    <input type="file" id="uploadFile" accept=".html">
-    <button id="uploadBtn">⬆️  Добавить лекцию</button>
-    <ul id="lectureList" class="lecture-list"></ul>
+    <div class="sidebar-header">
+        <h3>📚 Мои лекции</h3>
+        <button class="voice-btn" id="voiceBtn">🎤  Голосовой поиск</button>
+        <input type="text" class="search-box" id="searchInput" placeholder="🔍 Поиск...">
+        <div id="tree">Загрузка...</div>
+        
+        <div class="favorites-section" id="favoritesSection">
+            <div class="favorites-title">⭐ Закреплённые</div>
+            <ul class="favorites-list" id="favoritesList"></ul>
+        </div>
+
+        <div class="recent-section" id="recentSection">
+            <div class="recent-title">🕒 Недавние</div>
+            <ul class="recent-list" id="recentList"></ul>
+        </div>
+    </div>
+    <div class="bottom-info">
+        <div id="time"></div>
+    </div>
 </div>
 <div class="content">
-    <div id="viewer">📖  Выберите лекцию слева</div>
+    <div id="viewer">📖  Выберите лекцию</div>
 </div>
 
 <script>
-    const API_URL = 'http://localhost:3001/api';
+    // ========== НАСТРОЙКИ ==========
+    const USER = 'natutif-max';
+    const REPO = 'Лекции';
+    
+    // Хранилища
+    let favorites = JSON.parse(localStorage.getItem('favorites')) || {};  // { path: true }
+    let recent = JSON.parse(localStorage.getItem('recent')) || [];
+    let allLectures = []; // { name, path, url, folder }
 
-    async function loadLectures() {
-        const res = await fetch(`${API_URL}/lectures`);
-        const files = await res.json();
-        const list = document.getElementById('lectureList');
-        list.innerHTML = '';
-        files.forEach(file => {
-            const li = document.createElement('li');
-            li.textContent = file.replace('.html', '');
-            li.onclick = () => openLecture(file);
-            list.appendChild(li);
-        });
+    // Тема
+    const theme = localStorage.getItem('theme') || 'dark';
+    document.body.classList.add(theme);
+    document.body.classList.remove(theme === 'dark' ? 'light' : 'dark');
+
+    // Время
+    function updateTime() {
+        const now = new Date();
+        document.getElementById('time').innerHTML = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute:'2-digit' });
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    // API запрос
+    async function getContents(path = '') {
+        const url = `https://api.github.com/repos/${USER}/${REPO}/contents/${encodeURIComponent(path)}`;
+        const res = await fetch(url);
+        return res.json();
     }
 
-    async function openLecture(filename) {
+    // Сохранить закреплённые
+    function saveFavorites() {
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        renderFavorites();
+    }
+
+    function toggleFavorite(path, name, url) {
+        if (favorites[path]) {
+            delete favorites[path];
+        } else {
+            favorites[path] = { name, url };
+        }
+        saveFavorites();
+        renderFavorites();
+        buildTree(); // перерисовываем дерево, чтобы обновить звёздочки
+    }
+
+    function renderFavorites() {
+        const container = document.getElementById('favoritesList');
+        if (!container) return;
+        const favs = Object.entries(favorites);
+        if (favs.length === 0) {
+            container.innerHTML = '<li style="color:var(--text-secondary)">— нет —</li>';
+            return;
+        }
+container.innerHTML = favs.map(([path, data]) => 
+            `<li>
+                <span onclick="openLectureByPath('${path}', '${data.url}')">📄  ${data.name}</span>
+                <span class="favorite-star active" onclick="toggleFavorite('${path}', '${data.name}', '${data.url}')">★</span>
+            </li>`
+        ).join('');
+    }
+
+    // Добавить в недавние
+    function addToRecent(name, path, url) {
+        recent = recent.filter(r => r.path !== path);
+        recent.unshift({ name, path, url });
+        if (recent.length > 5) recent.pop();
+        localStorage.setItem('recent', JSON.stringify(recent));
+        renderRecent();
+    }
+
+    function renderRecent() {
+        const container = document.getElementById('recentList');
+        if (!container) return;
+        if (recent.length === 0) {
+            container.innerHTML = '<li style="color:var(--text-secondary)">— нет —</li>';
+            return;
+        }
+        container.innerHTML = recent.map(r => 
+            `<li onclick="openLectureByPath('${r.path}', '${r.url}')">📄  ${r.name}</li>`
+        ).join('');
+    }
+
+    window.openLectureByPath = (path, url) => {
         const viewer = document.getElementById('viewer');
-        viewer.innerHTML = `<iframe src="${API_URL}/lecture/${filename}"></iframe>`;
-    }
-
-    document.getElementById('uploadBtn').onclick = async () => {
-        const fileInput = document.getElementById('uploadFile');
-        if (!fileInput.files.length) return alert('Выберите файл .html');
-        const formData = new FormData();
-        formData.append('file', fileInput.files[0]);
-        await fetch(`${API_URL}/upload`, { method: 'POST', body: formData });
-        loadLectures();
+        viewer.innerHTML = `<iframe src="${url}"></iframe>`;
+        const lec = allLectures.find(l => l.path === path);
+        if (lec) addToRecent(lec.name, lec.path, lec.url);
+        loadReactions(path);
     };
 
-    loadLectures();
+    // Эмодзи-реакции
+    function loadReactions(path) {
+        // just keep, UI is updated via click
+    }
+    window.setReaction = (path, type) => {
+        const key = `reactions_${path}`;
+        const saved = JSON.parse(localStorage.getItem(key)) || { like: false, heart: false };
+        saved[type] = !saved[type];
+        localStorage.setItem(key, JSON.stringify(saved));
+        // обновим визуально звёздочку (можно перестроить дерево, но для простоты просто перезагрузим дерево)
+        buildTree();
+    };
+
+    // Построение дерева
+    async function buildTree() {
+        const container = document.getElementById('tree');
+        container.innerHTML = 'Загрузка...';
+        const items = await getContents('');
+        const folders = items.filter(i => i.type === 'dir');
+        const rootFiles = items.filter(i => i.type === 'file' && i.name.endsWith('.html'));
+        allLectures = [];
+
+        container.innerHTML = '';
+
+        for (const folder of folders) {
+            const folderDiv = document.createElement('div');
+            folderDiv.className = 'folder';
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'folder-name';
+            nameDiv.textContent = `📁  ${folder.name}`;
+            const fileList = document.createElement('ul');
+            fileList.className = 'file-list';
+
+            const sub = await getContents(folder.path);
+            const html = sub.filter(i => i.type === 'file' && i.name.endsWith('.html'));
+            for (const f of html) {
+                const li = document.createElement('li');
+                const link = document.createElement('a');
+                link.href = '#';
+                const fileName = f.name.replace('.html', '');
+                link.textContent = fileName;
+                link.onclick = () => {
+                    document.getElementById('viewer').innerHTML = `<iframe src="${f.download_url}"></iframe>`;
+                    addToRecent(fileName, f.path, f.download_url);
+                    return false;
+                };
+                const starSpan = document.createElement('span');
+                starSpan.className = 'favorite-star' + (favorites[f.path] ? ' active' : '');
+                starSpan.textContent = favorites[f.path] ? '★' : '☆';
+                starSpan.onclick = (e) => {
+                    e.stopPropagation();
+                    toggleFavorite(f.path, fileName, f.download_url);
+                    starSpan.className = 'favorite-star' + (favorites[f.path] ? ' active' : '');
+starSpan.textContent = favorites[f.path] ? '★' : '☆';
+                };
+                const reactionsDiv = document.createElement('div');
+                reactionsDiv.className = 'reactions';
+                reactionsDiv.innerHTML = `
+                    <span class="reaction" onclick="setReaction('${f.path}', 'like')">👍</span>
+                    <span class="reaction" onclick="setReaction('${f.path}', 'heart')">❤️ </span>
+                `;
+                li.appendChild(link);
+                li.appendChild(starSpan);
+                li.appendChild(reactionsDiv);
+                fileList.appendChild(li);
+                allLectures.push({ name: fileName, path: f.path, url: f.download_url, folder: folder.name });
+            }
+
+            nameDiv.onclick = () => fileList.classList.toggle('show');
+            folderDiv.appendChild(nameDiv);
+            folderDiv.appendChild(fileList);
+            container.appendChild(folderDiv);
+        }
+
+        if (rootFiles.length) {
+            const rootDiv = document.createElement('div');
+            rootDiv.innerHTML = '<strong>📄  Файлы</strong>';
+            const rootList = document.createElement('ul');
+            rootList.style.paddingLeft = '20px';
+            for (const f of rootFiles) {
+                const li = document.createElement('li');
+                const link = document.createElement('a');
+                link.href = '#';
+                const fileName = f.name.replace('.html', '');
+                link.textContent = fileName;
+                link.onclick = () => {
+                    document.getElementById('viewer').innerHTML = `<iframe src="${f.download_url}"></iframe>`;
+                    addToRecent(fileName, f.path, f.download_url);
+                    return false;
+                };
+                const starSpan = document.createElement('span');
+                starSpan.className = 'favorite-star' + (favorites[f.path] ? ' active' : '');
+                starSpan.textContent = favorites[f.path] ? '★' : '☆';
+                starSpan.onclick = (e) => {
+                    e.stopPropagation();
+                    toggleFavorite(f.path, fileName, f.download_url);
+                    starSpan.className = 'favorite-star' + (favorites[f.path] ? ' active' : '');
+                    starSpan.textContent = favorites[f.path] ? '★' : '☆';
+                };
+                const reactionsDiv = document.createElement('div');
+                reactionsDiv.className = 'reactions';
+                reactionsDiv.innerHTML = `
+                    <span class="reaction" onclick="setReaction('${f.path}', 'like')">👍</span>
+                    <span class="reaction" onclick="setReaction('${f.path}', 'heart')">❤️ </span>
+                `;
+                li.appendChild(link);
+                li.appendChild(starSpan);
+                li.appendChild(reactionsDiv);
+                rootList.appendChild(li);
+                allLectures.push({ name: fileName, path: f.path, url: f.download_url, folder: 'Корень' });
+            }
+            rootDiv.appendChild(rootList);
+            container.appendChild(rootDiv);
+        }
+
+        renderFavorites();
+        renderRecent();
+    }
+
+    // Поиск
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        const allLinks = document.querySelectorAll('.file-list a');
+        allLinks.forEach(link => {
+            const text = link.textContent.toLowerCase();
+            const li = link.closest('li');
+            if (li) li.style.display = text.includes(term) ? 'flex' : 'none';
+        });
+    });
+
+    // Голосовое управление
+    const voiceBtn = document.getElementById('voiceBtn');
+    if ('webkitSpeechRecognition' in window) {
+        const recognition = new webkitSpeechRecognition();
+        recognition.lang = 'ru-RU';
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        voiceBtn.onclick = () => {
+recognition.start();
+            voiceBtn.classList.add('listening');
+            voiceBtn.textContent = '🎤  Слушаю...';
+        };
+
+        recognition.onresult = (event) => {
+            const command = event.results[0][0].transcript.toLowerCase();
+            voiceBtn.classList.remove('listening');
+            voiceBtn.textContent = '🎤  Голосовой поиск';
+            
+            const found = allLectures.find(l => l.name.toLowerCase().includes(command) || command.includes(l.name.toLowerCase()));
+            if (found) {
+                document.getElementById('viewer').innerHTML = `<iframe src="${found.url}"></iframe>`;
+                addToRecent(found.name, found.path, found.url);
+                alert(`🔊  Открываю: ${found.name}`);
+            } else {
+                alert(`❌ Не нашёл лекцию "${command}"`);
+            }
+        };
+
+        recognition.onerror = () => {
+            voiceBtn.classList.remove('listening');
+            voiceBtn.textContent = '🎤  Голосовой поиск';
+            alert('Голос не распознан');
+        };
+    } else {
+        voiceBtn.disabled = true;
+        voiceBtn.textContent = '🎤  Голос не поддерживается';
+    }
+
+    buildTree();
 </script>
 </body>
 </html>
